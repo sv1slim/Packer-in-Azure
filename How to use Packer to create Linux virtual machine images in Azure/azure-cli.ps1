@@ -11,8 +11,8 @@ az group create -n myPackerResourceGroup -l eastus
 az group list --output table
 
 # Create a service principal and paste the IDs into ubuntu.json file 
-az ad sp create-for-rbac --role Contributor --scopes /subscriptions/"{subscription_id}" --query "{ client_id: appId, client_secret: password, tenant_id: tenant }"
-az role assignment list --scope /subscriptions/"{subscription_id}" --role "Contributor"
+az ad sp create-for-rbac --role Contributor --scopes /subscriptions/f7806be4-19fa-45cf-b6e7-636c8ebd49d9 --query "{ client_id: appId, client_secret: password, tenant_id: tenant }"
+az role assignment list --scope /subscriptions/"f7806be4-19fa-45cf-b6e7-636c8ebd49d9" --role "Contributor"
 az role assignment list --assignee "{client_id}"
 
 # Obtain your Azure subscription ID
@@ -22,7 +22,12 @@ az account show --query "{ subscription_id: id }"
 packer build ubuntu.json
 
 # Create VM from Azure Image
-az vm create --resource-group myResourceGroup --name myVM --image myPackerImage --admin-username azureuser --generate-ssh-keys
+az vm create `
+    --resource-group myPackerResourceGroup `
+    --name myVM `
+    --image myPackerImage `
+    --admin-username azureuser `
+    --generate-ssh-keys
 
 # Open port 80
 az vm open-port --resource-group myResourceGroup --name myVM --port 80
